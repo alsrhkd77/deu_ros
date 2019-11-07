@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1RSEVMXxF95yf7sobSCKbCe0O6t" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../deu_car" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="" />
+      <created>1569652119143</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569652119143</updated>
+      <workItem from="1569652120317" duration="2438000" />
+      <workItem from="1569661599147" duration="83000" />
+      <workItem from="1570459871209" duration="1875000" />
+      <workItem from="1570505873533" duration="2335000" />
+      <workItem from="1570607953799" duration="1040000" />
+      <workItem from="1570609773485" duration="3019000" />
+      <workItem from="1571368881155" duration="922000" />
+      <workItem from="1572417078327" duration="1830000" />
+      <workItem from="1572574617183" duration="389000" />
+      <workItem from="1572593893582" duration="133000" />
+      <workItem from="1572786127785" duration="55000" />
+      <workItem from="1572998632439" duration="266000" />
+      <workItem from="1572998923789" duration="324000" />
+      <workItem from="1572999259142" duration="754000" />
+      <workItem from="1573003078749" duration="2056000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>

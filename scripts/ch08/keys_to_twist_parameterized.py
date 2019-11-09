@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 
 key_mapping = {'w': [0, 1], 'x': [0, -1],
                'a': [-1, 0], 'd': [1, 0],
-               's': [0,0]}
+               's': [0, 0]}
 g_last_twist = None
 g_vel_scales = [0.1, 0.1]
 
@@ -32,7 +32,13 @@ if __name__ == "__main__":
     else:
         rospy.logwarn("linear scale not provided; using %.1f" %\
                       g_vel_scales[1])
-        #여기부터 추가
+
+    if rospy.has_param('~angular_scale'):
+        g_vel_scales[0] = rospy.get_param('~angular_scale')
+    else:
+        rospy.logwarn("angular scale not provided; using %.1f" %\
+                      g_vel_scales[0])
+
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         twist_pub.publish(g_last_twist)

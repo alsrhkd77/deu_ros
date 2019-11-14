@@ -1,4 +1,4 @@
-#!/home/mingwang/class/ros/catkin_ws/src/deu_ros/venv/bin/python
+#!/home/mingwang/ros/catkin_ws/src/deu_ros/venv/bin/python
 
 import sys
 import getopt

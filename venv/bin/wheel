@@ -1,4 +1,4 @@
-#!/home/mingwang/class/ros/catkin_ws/src/deu_ros/venv/bin/python2.7
+#!/home/mingwang/ros/catkin_ws/src/deu_ros/venv/bin/python2.7
 # -*- coding: utf-8 -*-
 import re
 import sys

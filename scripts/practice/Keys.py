@@ -7,9 +7,9 @@ from std_msgs.msg import String
 class Keys:
     def __init__(self):
         self.key_pub = rospy.Publisher('keys', String, queue_size=1)
-        rospy.init_node("keyboard_driver")
+        #rospy.init_node("keyboard_driver")
         self.old_attr = termios.tcgetattr(sys.stdin)
-        self.tty.setcbreak(sys.stdin.fileno())
+        tty.setcbreak(sys.stdin.fileno())
         print "Publishing keystrokes. Press Ctrl-C to exit.."
 
     def publish(self):
@@ -18,7 +18,7 @@ class Keys:
 
 if __name__ == "__main__":
     keys = Keys()
-    rate = rospy.Rate(100)
+    rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         keys.publish()
         rate.sleep()

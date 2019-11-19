@@ -4,6 +4,8 @@
     <list default="true" id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/practice/Drive.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/practice/Drive.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/practice/PosBag.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/practice/PosBag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/practice/Runner.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/practice/Runner.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/practice/Scan.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/practice/Scan.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/practice/Tbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/practice/Tbot.py" afterDir="false" />
     </list>
@@ -109,6 +111,9 @@
       <workItem from="1574147838686" duration="9111000" />
       <workItem from="1574157004682" duration="468000" />
       <workItem from="1574163444982" duration="11758000" />
+      <workItem from="1574176157312" duration="6582000" />
+      <workItem from="1574183031259" duration="12968000" />
+      <workItem from="1574196877760" duration="1537000" />
     </task>
     <servers />
   </component>

@@ -33,9 +33,10 @@ class Laser_Scan:
         print "range ahead: %0.1f" % self.range_ahead
         print "range left: %0.1f" % self.range_left
         print "range right: %0.1f" % self.range_right
-        print "left: %0.1f" % left
-        print "right: %0.1f" % right
+        print "left: %0.1f" % self.left
+        print "right: %0.1f" % self.right
         '''
+
 
 class Pose_Scan:
     def __init__(self):

@@ -2,20 +2,32 @@
 
 import math
 
+import rospy
+from std_msgs.msg import String
+
 from Scan import Laser_Scan, Pose_Scan
 from Drive import Drive_Method
 import PosBag
 
-class Runner(Laser_Scan, Pose_Scan):
+class Runner(Pose_Scan):
     def __init__(self):
-        Laser_Scan.__init__(self)
         Pose_Scan.__init__(self)
-        self.next = PosBag.stk.pop()
+        self.mode = 0  # 0=Explorer, 1=Runner
+        self.next = 0
+        rospy.Subscriber('keys', String, self.keys_cb)
 
-    def scan_callback(self, msg):
-        if self.next == 0:
+    def keys_cb(self, msg):
+        if len(msg.data) == 0:
+            return  # Unknown
+        if msg.data[0] == 'v':
+            self.mode = 1
+
+    def pose_callback(self, msg):
+        Pose_Scan.pose_callback(self, msg)
+        if self.mode == 0:
             return #finish
-        Laser_Scan.scan_callback(self, msg)
+        if self.next == 0:
+            self.next = PosBag.stk.pop()
         self.escape()
 
     def escape(self):
@@ -31,14 +43,14 @@ class Runner(Laser_Scan, Pose_Scan):
             drive.publish()
             return #finish
 
-        '''
+
         print "target dir: ", target_dir
         print "angle: ", self.angle
         print "pose x: ", self.position_x
         print "pose y: ", self.position_y
         print "target pos x:", target_pose[0]
         print "target pos y:", target_pose[1]
-        '''
+
 
         if target_dir <= 10 or target_dir >= 350:
             if 350.0 < self.angle or self.angle < target_dir + 10.0:  # match pose

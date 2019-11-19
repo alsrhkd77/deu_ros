@@ -6,12 +6,15 @@ import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
-
+'''
+Common used Twist publisher class
+'''
 class Drive:
     def __init__(self):
         self.twist_pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist, queue_size=1)
 
     def publish(self):
+        #decrease turn
         if Drive_vel.turn > 0:
             Drive_vel.turn -= 0.1
             if Drive_vel.turn < 0.2:
@@ -20,6 +23,8 @@ class Drive:
             Drive_vel.turn += 0.1
             if Drive_vel.turn > -0.2:
                 Drive_vel.turn = 0
+
+        #Publish
         t = Twist()
         t.angular.z = Drive_vel.turn
         t.linear.x = Drive_vel.speed
@@ -27,6 +32,16 @@ class Drive:
         #print "publish speed: %f, turn %f", Drive_vel.speed, Drive_vel.turn
 
 
+'''
+Publish Twist MSG use key input
+w: go
+s: back
+a: increse turn left
+d: increse turn right
+q: turn left
+e: turn right
+x: force stop
+'''
 class Drive_Keys(Drive):
     def __init__(self):
         Drive.__init__(self)
@@ -45,6 +60,9 @@ class Drive_Keys(Drive):
         self.publish()
 
 
+'''
+Publish Twist MSG use Method
+'''
 class Drive_Method(Drive):
     def __init__(self):
         Drive.__init__(self)
@@ -84,6 +102,7 @@ class Drive_Method(Drive):
         Drive_vel.turn = -2
 
 
+'''
 if __name__ == "__main__":
     rospy.init_node('drive_car')
     drive = Drive()
@@ -92,3 +111,4 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         drive.publish()
         rate.sleep()
+'''

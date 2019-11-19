@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+'''
+Controller side
+'''
+
 import rospy
 from Keys import Keys
 import sys, select, tty, termios

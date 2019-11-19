@@ -1,3 +1,8 @@
+#! /usr/bin/env python
+
+'''
+This values can replace custom MSG
+'''
 
 speed = 0
 turn = 0

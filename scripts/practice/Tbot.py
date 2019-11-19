@@ -1,13 +1,16 @@
 #! /usr/bin/env python
 
+'''
+Robot side
+'''
+
 import rospy
 
 from Drive import Drive, Drive_Keys
-from Scan import Scan, Pose_scan
+from Scan import Scan
 
 if __name__ == "__main__":
     rospy.init_node('drive_bot')
-    drive_keys = Drive_Keys()
     scan = Scan()
-    pose = Pose_scan()
+    drive_keys = Drive_Keys()
     rospy.spin()

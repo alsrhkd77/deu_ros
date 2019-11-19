@@ -36,34 +36,13 @@ class Laser_Scan:
         print "left: %0.1f" % left
         print "right: %0.1f" % right
         '''
-        #drive = Drive()
-        drive = Drive_Method()
-        if self.range_ahead <= 0.4:
-            drive.forceStop()
-            self.turnAlgorithm()
-            #Drive_vel.forceStop()
-        elif self.range_left <= 0.4:
-            pass
-            #drive.turnRight()
-            #Drive_vel.turnRight()
-        elif self.range_right <= 0.4:
-            pass
-            #drive.turnLeft()
-            #Drive_vel.turnLeft()
-        else:
-            pass
-            #drive.increaseSpeed()
-            #Drive_vel.increaseSpeed()
-        drive.publish()
-
-    def turnAlgorithm(self):
-        pass
 
 class Pose_Scan:
     def __init__(self):
         self.angle = 0.0
         self.position_x = 0.0
         self.position_y = 0.0
+        self.position = [0, 0]
         self.pose_sub = rospy.Subscriber('base_pose_ground_truth', Odometry, self.pose_callback)
 
     def pose_callback(self, msg):
@@ -72,9 +51,13 @@ class Pose_Scan:
         self.angle = (euler[2] * 180.0 / math.pi) + 180.0 #use yaw
         self.position_x = msg.pose.pose.position.x
         self.position_y = msg.pose.pose.position.y
+        self.position = [self.position_x, self.position_y]
+
+        '''
         print "angle: %0.1f" % self.angle
         print "pos_x: %0.1f" % self.position_x
         print "pos_y: %0.1f" % self.position_y
+        '''
 
         '''
         print "roll: %0.1f" % euler[0]

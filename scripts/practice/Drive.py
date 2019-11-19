@@ -101,6 +101,18 @@ class Drive_Method(Drive):
         Drive_vel.speed = 0
         Drive_vel.turn = -2
 
+    def fullSpeed(self):
+        Drive_vel.speed = 1.0
+        Drive_vel.turn = 0
+
+    def angleTurnLeft(self):
+        Drive_vel.speed = 0
+        Drive_vel.turn = 0.8
+
+    def angleTurnRight(self):
+        Drive_vel.speed = 0
+        Drive_vel.turn = -0.8
+
 
 '''
 if __name__ == "__main__":

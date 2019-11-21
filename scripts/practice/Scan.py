@@ -29,13 +29,12 @@ class Laser_Scan:
         self.right = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) / 8:len(msg.ranges) * 3 / 8])
         self.left = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 7 / 8])
 
-        '''
+    def print_laser_status(self):
         print "range ahead: %0.1f" % self.range_ahead
         print "range left: %0.1f" % self.range_left
         print "range right: %0.1f" % self.range_right
         print "left: %0.1f" % self.left
         print "right: %0.1f" % self.right
-        '''
 
 
 class Pose_Scan:
@@ -44,27 +43,28 @@ class Pose_Scan:
         self.position_x = 0.0
         self.position_y = 0.0
         self.position = [0, 0]
-        self.pose_sub = rospy.Subscriber('base_pose_ground_truth', Odometry, self.pose_callback)
+        self.pose_sub = rospy.Subscriber('odom', Odometry, self.pose_callback)
 
     def pose_callback(self, msg):
         ori = [msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w]
         euler = euler_from_quaternion(ori)
-        self.angle = (euler[2] * 180.0 / math.pi) + 180.0 #use yaw
-        self.position_x = msg.pose.pose.position.x
-        self.position_y = msg.pose.pose.position.y
+        self.angle = round((euler[2] * 180.0 / math.pi) + 180.0, 2) #use yaw, +-15.0
+        self.position_x = round(msg.pose.pose.position.x, 2)
+        self.position_y = round(msg.pose.pose.position.y, 2)
         self.position = [self.position_x, self.position_y]
+        self.print_pose_status()
 
-        '''
+    def print_pose_status(self):
         print "angle: %0.1f" % self.angle
         print "pos_x: %0.1f" % self.position_x
         print "pos_y: %0.1f" % self.position_y
-        '''
 
         '''
         print "roll: %0.1f" % euler[0]
         print "pitch: %0.1f" % euler[1]
         print "yaw: %0.1f" % euler[2]
         '''
+
 
 class Scan(Laser_Scan, Pose_Scan):
     def __init__(self):

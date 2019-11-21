@@ -14,7 +14,13 @@ class Drive:
         self.twist_pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist, queue_size=1)
 
     def publish(self):
-        #decrease turn
+        #Publish
+        t = Twist()
+        t.angular.z = Drive_vel.turn
+        t.linear.x = Drive_vel.speed
+        self.twist_pub.publish(t)
+        #print "publish speed: %f, turn %f", Drive_vel.speed, Drive_vel.turn
+        # decrease turn
         if Drive_vel.turn > 0:
             Drive_vel.turn -= 0.1
             if Drive_vel.turn < 0.2:
@@ -23,13 +29,6 @@ class Drive:
             Drive_vel.turn += 0.1
             if Drive_vel.turn > -0.2:
                 Drive_vel.turn = 0
-
-        #Publish
-        t = Twist()
-        t.angular.z = Drive_vel.turn
-        t.linear.x = Drive_vel.speed
-        self.twist_pub.publish(t)
-        #print "publish speed: %f, turn %f", Drive_vel.speed, Drive_vel.turn
 
 
 '''
@@ -115,11 +114,11 @@ class Drive_Method(Drive):
 
     def angleTurnLeft(self):
         Drive_vel.speed = 0
-        Drive_vel.turn = 0.8
+        Drive_vel.turn = 0.1
 
     def angleTurnRight(self):
         Drive_vel.speed = 0
-        Drive_vel.turn = -0.8
+        Drive_vel.turn = -0.1
 
 
 '''

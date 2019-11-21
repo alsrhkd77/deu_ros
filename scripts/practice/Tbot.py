@@ -14,10 +14,10 @@ from Runner import Runner
 
 if __name__ == "__main__":
     #PosBag.temp()
-    PosBag.stk.append(0)
+    #PosBag.stk.append(0)
     rospy.init_node('drive_bot')
-    #scan = Scan()
-    explorer = Explorer()
-    runner = Runner()
+    scan = Scan()
+    #explorer = Explorer()
+    #runner = Runner()
     drive_keys = Drive_Keys()
     rospy.spin()

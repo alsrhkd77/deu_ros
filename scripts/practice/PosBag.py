@@ -3,7 +3,7 @@
 mode = 'Explorer'
 base = [-7.92, 5.3] #start position
 map_goal = [7.95, -5.15]    #finish position
-goal = [base[0] - map_goal[0], base[1] - map_goal[1]]
+goal = [map_goal[0] - base[0], map_goal[1] - base[1]]
 path = {0:[None, [0, 0], None, 90.0]}   #postnode, position(x,y), direction('left'/'right'/'both')
 #path = {0:[None, goal, None]}   #postnode, position(x,y), direction('left'/'right'/'both')
 stk = [int(0)]   #path stack

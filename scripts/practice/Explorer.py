@@ -69,24 +69,75 @@ class Explorer(Laser_Scan, Pose_Scan):
         drive = Drive_Method()
         if PosBag.mode == 'Explorer':
             drive = Drive_Method()
+            if PosBag.goal[0] - 0.2 < round(self.position_x, 2) < PosBag.goal[0] + 0.2 and PosBag.goal[1] - 0.2 < round(
+                    self.position_y, 2) < PosBag.goal[1] + 0.2:
+                PosBag.mode = 'Runner'
+                rospy.loginfo("Finish escape maze")
+                print "position x: ", self.position_x
+                print "position y: ", self.position_y
+                print "path: ", PosBag.path
+                print "stack: ", PosBag.stk
+                return
+            elif PosBag.goal[0] - 1.2 < round(self.position_x, 2) < PosBag.goal[0] + 1.2 and PosBag.goal[
+                1] - 1.2 < round(self.position_y, 2) < PosBag.goal[1] + 1.2:
+                self.target_dir = self.get_direction(PosBag.goal)
+                self.set_pose = True
+            elif round(self.position_y, 2) < -10:
+                self.target_dir = self.get_direction(PosBag.goal)
+                self.set_pose = True
+            node_x = PosBag.path[self.now_node][1][0]
+            node_y = PosBag.path[self.now_node][1][1]
+            if node_x - 0.5 < round(self.position_x, 2) < node_x + 0.5 \
+                    and node_y - 0.5 < round(self.position_y, 2) < node_y + 0.5 \
+                    and self.target_node != 0:
+                self.roll_back()
+
             if self.set_pose:
                 self.set_posture(drive) #set head poses
             else:
                 self.expedition(drive)
         #self.print_explorer_status()
 
+
     def pose_callback(self, msg):
         Pose_Scan.pose_callback(self, msg)
+
+        if not PosBag.mode == 'Explorer':
+            return
+
+        '''
+        if PosBag.goal[0] - 0.2 < round(self.position_x, 2) < PosBag.goal[0] + 0.2 and PosBag.goal[1] - 0.2 < round(self.position_y, 2) < PosBag.goal[1] + 0.2:
+            PosBag.mode = 'Runner'
+            rospy.loginfo("Finish escape maze")
+            print "position x: ", self.position_x
+            print "position y: ", self.position_y
+            print "path: ", PosBag.path
+            print "stack: ", PosBag.stk
+            return
+        elif PosBag.goal[0] - 1.2 < round(self.position_x, 2) < PosBag.goal[0] + 1.2 and PosBag.goal[1] - 1.2 < round(self.position_y, 2) < PosBag.goal[1] + 1.2:
+            self.target_dir = self.get_direction(PosBag.goal)
+            self.set_pose = True
+            return
+        elif round(self.position_y, 2) < -10:
+            self.target_dir = self.get_direction(PosBag.goal)
+            self.set_pose = True
+            return
         node_x = PosBag.path[self.now_node][1][0]
         node_y = PosBag.path[self.now_node][1][1]
-        if node_x - 0.5 < round(self.position_x, 2) < node_x + 0.5 and node_y - 0.5 < round(self.position_y, 2) < node_y + 0.5 and self.target_node != 0:
+        if node_x - 0.5 < round(self.position_x, 2) < node_x + 0.5\
+                and node_y - 0.5 < round(self.position_y, 2) < node_y + 0.5\
+                and self.target_node != 0:
             self.roll_back()
+        '''
 
     def roll_back(self):
         if self.now_node == self.target_node:
+            PosBag.stk.append(self.now_node)
             self.set_pose = False
             self.target_node = 0
-            self.target_dir = PosBag.path[self.target_node][3]
+            post = PosBag.stk[PosBag.stk.index(self.now_node) - 1]
+            self.target_dir = PosBag.path[post][3]
+            #print "old angle: ", PosBag.path[self.target_node][3] - 90.0
             if self.target_dir >= 360.0:
                 self.target_dir -= 360
             elif self.target_dir < 0:
@@ -99,6 +150,8 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.target_dir = self.get_direction(PosBag.path[self.now_node][1])
             self.set_pose = True
         #self.print_explorer_status()
+        #print "path: ", PosBag.path
+        #print "stack: ", PosBag.stk
 
     def set_starting(self): #init status at starting
         self.target_dir = 90.0
@@ -137,6 +190,7 @@ class Explorer(Laser_Scan, Pose_Scan):
     def expedition(self, drive):   #drive linear
         max_margin = 12.0
         if self.range_ahead <= 0.6: #there's a wall in front
+            #self.print_explorer_status()
             self.set_pose = True
             drive.forceStop()
             drive.publish()
@@ -222,7 +276,7 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.now_node = self.stk_count
             self.roll_back()
             #self.target_dir = self.get_direction(PosBag.path[self.now_node][1])  # turn back
-            self.print_explorer_status()
+            #self.print_explorer_status()
 
         #check overflow
         if self.target_dir >= 360:
@@ -237,6 +291,8 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.push_bag(self.position, check)
 
     def push_bag(self, position, dir):  #push stack and path_dic
+        self.stk_count += 1
+
         if dir == 'both':
             #check stack
             PosBag.stk.reverse()
@@ -244,7 +300,7 @@ class Explorer(Laser_Scan, Pose_Scan):
                 if position[0] - 1.0 <= PosBag.path[i][1][0] <= position[0] + 1.0 and position[1] - 1.0 <= PosBag.path[i][1][1] <= position[1] + 1.0:
                     PosBag.stk.remove(i)
             PosBag.stk.reverse()
-        self.stk_count += 1
+
         PosBag.path[self.stk_count] = [self.stk_count - 1, position, dir, self.target_dir]
         PosBag.stk.append(self.stk_count)
         #print "path: ", PosBag.path
@@ -264,6 +320,7 @@ class Explorer(Laser_Scan, Pose_Scan):
         if angle >= 360:
             angle -= 360
         return round(angle, 2)
+        #return round(angle, 2)
 
     def rot_dir(self, pre, target): #rotate which direction
         pre = (pre * math.pi / 180) - math.pi
@@ -283,6 +340,7 @@ class Explorer(Laser_Scan, Pose_Scan):
         # return unused node
         if len(PosBag.unused) != 0:
             node = PosBag.unused.pop()
+            del PosBag.stk[1:]
             PosBag.stk.append(node)
             return node
         else:
@@ -293,7 +351,6 @@ class Explorer(Laser_Scan, Pose_Scan):
     def print_explorer_status(self):
         rospy.loginfo("angle: %0.10f" %self.angle)
         rospy.loginfo("target_dir: %0.10f" %self.target_dir)
-        '''
         rospy.loginfo("range ahead: %0.10f" %self.range_ahead)
         rospy.loginfo("range left min: %0.1f" % self.range_left_min)
         rospy.loginfo("range right min: %0.1f" % self.range_right_min)
@@ -303,6 +360,5 @@ class Explorer(Laser_Scan, Pose_Scan):
         rospy.loginfo("right: %0.10f" %self.right)
         rospy.loginfo("speed: %0.01f" %Drive_vel.speed)
         rospy.loginfo("turn: %0.01f" %Drive_vel.turn)
-        '''
         rospy.loginfo("target node %0.01f" %self.target_node)
         rospy.loginfo("now node %0.01f" %self.now_node)

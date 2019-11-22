@@ -28,14 +28,11 @@ class Laser_Scan:
 
         #get nearest range
         #2.0 > right or left
-        self.range_right_min = reduce(lambda x, y: x if x < y else y,
-                                      msg.ranges[len(msg.ranges) / 4:len(msg.ranges) * 3 / 8])
-        self.range_left_min = reduce(lambda x, y: x if x < y else y,
-                                     msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 3 / 4])
-        self.range_right_max = reduce(lambda x, y: x if x > y else y,
-                                      msg.ranges[len(msg.ranges) / 8:len(msg.ranges) * 3 / 8])
-        self.range_left_max = reduce(lambda x, y: x if x > y else y,
-                                     msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 7 / 8])
+        self.range_right_min = reduce(lambda x, y: x if x < y else y, msg.ranges[len(msg.ranges) / 4:len(msg.ranges) * 3 / 8])
+        self.range_left_min = reduce(lambda x, y: x if x < y else y, msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 3 / 4])
+        self.range_right_max = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) / 8:len(msg.ranges) * 3 / 8])
+        self.range_left_max = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 7 / 8])
+        #self.print_laser_status()
 
     def print_laser_status(self):
         print "range ahead: %0.1f" % self.range_ahead

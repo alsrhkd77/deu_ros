@@ -12,7 +12,7 @@ import PosBag
 class Runner(Pose_Scan):
     def __init__(self):
         Pose_Scan.__init__(self)
-        self.mode = 0  # 0=Explorer, 1=Runner
+        #self.mode = 0  # 0=Explorer, 1=Runner
         self.next = 0
         rospy.Subscriber('keys', String, self.keys_cb)
 
@@ -24,7 +24,7 @@ class Runner(Pose_Scan):
 
     def pose_callback(self, msg):
         Pose_Scan.pose_callback(self, msg)
-        if self.mode == 0:
+        if PosBag.mode == 'Explorer':
             return #finish
         if self.next == 0:
             self.next = PosBag.stk.pop()

@@ -18,6 +18,6 @@ if __name__ == "__main__":
     rospy.init_node('drive_bot')
     #scan = Scan()
     explorer = Explorer()
-    #runner = Runner()
+    runner = Runner()
     drive_keys = Drive_Keys()
     rospy.spin()

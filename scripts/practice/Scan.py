@@ -24,10 +24,10 @@ class Laser_Scan:
         self.range_right = msg.ranges[len(msg.ranges) / 4]      # 90
         self.range_left = msg.ranges[len(msg.ranges) * 3 / 4]  # 270
 
-        #get biggist range
+        #get nearest range
         #2.0 > right or left
-        self.right = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) / 8:len(msg.ranges) * 3 / 8])
-        self.left = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) * 5 / 8:len(msg.ranges) * 7 / 8])
+        self.right = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) / 4:len(msg.ranges) / 2])
+        self.left = reduce(lambda x, y: x if x > y else y, msg.ranges[len(msg.ranges) / 2:len(msg.ranges) * 3 / 4])
 
     def print_laser_status(self):
         print "range ahead: %0.1f" % self.range_ahead
@@ -52,7 +52,7 @@ class Pose_Scan:
         self.position_x = round(msg.pose.pose.position.x, 2)
         self.position_y = round(msg.pose.pose.position.y, 2)
         self.position = [self.position_x, self.position_y]
-        self.print_pose_status()
+        #self.print_pose_status()
 
     def print_pose_status(self):
         print "angle: %0.1f" % self.angle

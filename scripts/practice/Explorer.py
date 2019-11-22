@@ -56,6 +56,8 @@ class Explorer(Laser_Scan, Pose_Scan):
         self.key_pub = rospy.Publisher('keys', String, queue_size=1)
         self.set_pose = False
         self.old_target_dir = 0.0
+        self.left_wall = [0, 0]
+        self.right_wall = [0, 0]
         self.target_dir = 0.0
         self.stk_count = 0
         self.set_starting()
@@ -73,6 +75,9 @@ class Explorer(Laser_Scan, Pose_Scan):
 
     def pose_callback(self, msg):
         Pose_Scan.pose_callback(self, msg)
+
+    def roll_back(self, drive):
+        pass
 
     def set_starting(self): #init status at starting
         self. target_dir = 90.0
@@ -115,13 +120,24 @@ class Explorer(Laser_Scan, Pose_Scan):
             drive.forceStop()
             drive.publish()
             self.check_side()
-            pass    #todo: check side
             return
+
         #check side path
-        if self.range_left_min >= 1.5:
-            pass
-        if self.range_right_min >= 1.5:
-            pass
+        if self.range_left_min >= 1.5 and self.left_wall == [0, 0]:
+            self.left_wall = self.position
+        elif not(self.range_left_min >= 1.5) and not(self.left_wall == [0, 0]):
+            position = numpy.round((numpy.array(self.position) + numpy.array(self.left_wall)) / 2, 2)
+            self.push_bag(position.tolist(), 'left')
+            self.left_wall = [0, 0]
+
+        if self.range_right_min >= 1.5 and self.right_wall == [0, 0]:
+            self.right_wall = self.position
+        elif not(self.range_right_min >= 1.5) and not(self.right_wall == [0, 0]):
+            position = numpy.round((numpy.array(self.position) + numpy.array(self.left_wall)) / 2, 2)
+            numpy.round(position, 2)
+            self.push_bag(position.tolist(), 'right')
+            self.right_wall = [0, 0]
+
         if self.range_left_min < 1.5 and self.range_right_min < 1.5:
             if round(self.range_left_min, 1) == round(self.range_right_min, 1):
                 drive.increaseSpeed()
@@ -160,6 +176,8 @@ class Explorer(Laser_Scan, Pose_Scan):
         drive.publish()
 
     def check_side(self):
+        self.left_wall = [0, 0]
+        self.right_wall = [0, 0]
         #now_angle = self.find_nearest(self.angle)
         check = ''
         if self.range_left_max > 1.5 and self.range_right_max > 1.5:
@@ -179,13 +197,25 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.target_dir -= 360.0
         elif self.target_dir < 0:
             self.target_dir += 360.0
-        self.print_explorer_status()
+        #self.print_explorer_status()
         self.set_pose = True
 
         #push stack and path_dic
+        self.push_bag(self.position, check)
+
+    def push_bag(self, position, dir):  #push stack and path_dic
+        if dir == 'both':
+            #check stack
+            PosBag.stk.reverse()
+            for i in PosBag.stk:
+                if position[0] - 1.0 <= PosBag.path[i][1][0] <= position[0] + 1.0 and position[1] - 1.0 <= PosBag.path[i][1][1] <= position[1] + 1.0:
+                    PosBag.stk.remove(i)
+            PosBag.stk.reverse()
         self.stk_count += 1
-        PosBag.path[self.stk_count] = [self.stk_count - 1, self.position, check]
+        PosBag.path[self.stk_count] = [self.stk_count - 1, position, dir]
         PosBag.stk.append(self.stk_count)
+        print "path: ", PosBag.path
+        print "stack: ", PosBag.stk
 
     def get_direction(self, position):  #get target direction
         angle = 180.0 * math.atan2(self.position_y - position[1], self.position_x - position[0]) / math.pi

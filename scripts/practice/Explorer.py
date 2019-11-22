@@ -10,6 +10,10 @@ from Scan import Laser_Scan, Pose_Scan
 from Drive import Drive_Method
 import PosBag
 
+import Drive_vel    #remove at last
+
+'''
+not use this class, have to be erased!
 class Exp(Laser_Scan, Pose_Scan):
     def __init__(self):
         Laser_Scan.__init__(self)
@@ -42,7 +46,7 @@ class Exp(Laser_Scan, Pose_Scan):
         if angle >= 360:
             angle -= 360
         return angle
-
+'''
 
 
 class Explorer(Laser_Scan, Pose_Scan):
@@ -51,6 +55,7 @@ class Explorer(Laser_Scan, Pose_Scan):
         Pose_Scan.__init__(self)
         self.key_pub = rospy.Publisher('keys', String, queue_size=1)
         self.set_pose = False
+        self.old_target_dir = 0.0
         self.target_dir = 0.0
         self.stk_count = 0
         self.set_starting()
@@ -66,15 +71,21 @@ class Explorer(Laser_Scan, Pose_Scan):
                 self.expedition(drive)
         #self.print_explorer_status()
 
+    def pose_callback(self, msg):
+        Pose_Scan.pose_callback(self, msg)
+
     def set_starting(self): #init status at starting
         self. target_dir = 90.0
+        self.old_target_dir = self.angle
         self.set_pose = True
 
     def set_posture(self, drive):
         turn_angle = self.rot_dir(self.angle, self.target_dir)
+        drive.forceStop()
         if self.target_dir - 12.0 < round(self.angle, 2) < self.target_dir + 12.0:    #finish
             self.set_pose = False
-            self.print_explorer_status()
+            self.old_target_dir = self.target_dir
+            #self.print_explorer_status()
             return #finish set
         elif self.target_dir - 29.0 < round(self.angle, 2) < self.target_dir + 29.0:    #turn 0.4
             if turn_angle >= 0:  # should turn left
@@ -98,54 +109,77 @@ class Explorer(Laser_Scan, Pose_Scan):
         drive.publish()
 
     def expedition(self, drive):   #drive linear
+        max_margin = 12.0
         if self.range_ahead <= 0.6: #there's a wall in front
             self.set_pose = True
             drive.forceStop()
             drive.publish()
             self.check_side()
             pass    #todo: check side
-            # return
+            return
         #check side path
-        if self.left >= 1.5:
+        if self.range_left_min >= 1.5:
             pass
-        if self.right >= 1.5:
+        if self.range_right_min >= 1.5:
             pass
-        if self.left < 1.5 and self.right < 1.5:
-            if round(self.left, 1) == round(self.right, 1):
+        if self.range_left_min < 1.5 and self.range_right_min < 1.5:
+            if round(self.range_left_min, 1) == round(self.range_right_min, 1):
                 drive.increaseSpeed()
-            elif self.left <= 0.5:
-                drive.increaseRightTurn()
-            elif self.right <= 0.5:
-                drive.increaseLeftTurn()
-            elif self.left < self.right:
-                drive.increaseRightTurn()
-            elif self.left > self.right:
-                drive.increaseLeftTurn()
+            elif self.target_dir == 0 and (self.angle > max_margin or self.angle < 360 - max_margin):
+                if self.angle > 180.0:
+                    drive.smallTurnLeft()
+                    drive.booster()
+                else:
+                    drive.smallTurnRight()
+                    drive.booster()
+            elif not(self.target_dir - max_margin < self.angle < self.target_dir + max_margin):
+                if self.target_dir + max_margin > self.angle:
+                    drive.smallTurnLeft()
+                    drive.booster()
+                else:
+                    drive.smallTurnRight()
+                    drive.booster()
+            elif self.range_left_min <= 0.5:
+                #drive.increaseRightTurn()
+                drive.smallTurnRight()
+                drive.booster()
+            elif self.range_right_min <= 0.5:
+                #drive.increaseLeftTurn()
+                drive.smallTurnLeft()
+                drive.booster()
+            elif self.range_left_min < self.range_right_min:
+                #drive.increaseRightTurn()
+                drive.smallTurnRight()
+                drive.booster()
+            elif self.range_left_min > self.range_right_min:
+                #drive.increaseLeftTurn()
+                drive.smallTurnLeft()
+                drive.booster()
         else:
             drive.increaseSpeed()
         drive.publish()
 
     def check_side(self):
-        now_angle = self.find_nearest(self.angle)
+        #now_angle = self.find_nearest(self.angle)
         check = ''
-        if self.range_left > 1.5 and self.range_right > 1.5:
+        if self.range_left_max > 1.5 and self.range_right_max > 1.5:
             check = 'both'
-            self.target_dir = now_angle + 90.0  #turn right
-        elif self.range_right > 1.5:
+            self.target_dir = self.old_target_dir + 90.0  #turn right
+        elif self.range_right_max > 1.5:
             check = 'right'
-            self.target_dir = now_angle - 90.0  # turn right
-        elif self.range_left > 1.5:
+            self.target_dir = self.old_target_dir - 90.0  # turn right
+        elif self.range_left_max > 1.5:
             check = 'left'
-            self.target_dir = now_angle + 90.0  # turn left
+            self.target_dir = self.old_target_dir + 90.0  # turn left
         else:
-            self.target_dir = now_angle - 180.0  # turn back
+            self.target_dir = self.old_target_dir - 180.0  # turn back
 
         #check overflow
         if self.target_dir >= 360:
             self.target_dir -= 360.0
         elif self.target_dir < 0:
             self.target_dir += 360.0
-
+        self.print_explorer_status()
         self.set_pose = True
 
         #push stack and path_dic
@@ -174,10 +208,14 @@ class Explorer(Laser_Scan, Pose_Scan):
 
     #TODO: erase print method
     def print_explorer_status(self):
-        rospy.loginfo("angle: %0.10f", self.angle)
-        rospy.loginfo("target_dir: %0.10f", self.target_dir)
-        rospy.loginfo("range ahead: %0.10f", self.range_ahead)
-        rospy.loginfo("range left: %0.10f", self.range_left)
-        rospy.loginfo("range right %0.01f", self.range_right)
-        rospy.loginfo("left: %0.10f", self.left)
-        rospy.loginfo("right: %0.10f", self.right)
+        rospy.loginfo("angle: %0.10f" %self.angle)
+        rospy.loginfo("target_dir: %0.10f" %self.target_dir)
+        rospy.loginfo("range ahead: %0.10f" %self.range_ahead)
+        rospy.loginfo("range left min: %0.1f" % self.range_left_min)
+        rospy.loginfo("range right min: %0.1f" % self.range_right_min)
+        rospy.loginfo("range left max: %0.1f" % self.range_left_max)
+        rospy.loginfo("range right max: %0.1f" % self.range_right_max)
+        rospy.loginfo("left: %0.10f" %self.left)
+        rospy.loginfo("right: %0.10f" %self.right)
+        rospy.loginfo("speed: %0.01f" %Drive_vel.speed)
+        rospy.loginfo("turn: %0.01f" %Drive_vel.turn)

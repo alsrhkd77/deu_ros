@@ -79,14 +79,14 @@ class Drive_Method(Drive):
             Drive_vel.speed = -1
 
     def increaseLeftTurn(self):
-        Drive_vel.turn += 0.4
-        if (Drive_vel.turn > 2):
-            Drive_vel.turn = 2
+        Drive_vel.turn += 0.5
+        if (Drive_vel.turn > 1.0):
+            Drive_vel.turn = 1.0
 
     def increaseRightTurn(self):
-        Drive_vel.turn -= 0.4
-        if (Drive_vel.turn < -2):
-            Drive_vel.turn = -2
+        Drive_vel.turn -= 0.5
+        if (Drive_vel.turn < -1.0):
+            Drive_vel.turn = -1.0
 
     def forceStop(self):
         Drive_vel.speed = 0
@@ -99,6 +99,9 @@ class Drive_Method(Drive):
     def turnRight(self):
         Drive_vel.speed = 0
         Drive_vel.turn = -2
+
+    def booster(self):
+        Drive_vel.speed = 1.0
 
     def fullSpeed(self):
         Drive_vel.speed = 1.0

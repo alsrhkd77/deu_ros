@@ -59,6 +59,8 @@ class Explorer(Laser_Scan, Pose_Scan):
         self.left_wall = [0, 0]
         self.right_wall = [0, 0]
         self.target_dir = 0.0
+        self.target_node = 0
+        self.now_node = 0
         self.stk_count = 0
         self.set_starting()
 
@@ -75,12 +77,31 @@ class Explorer(Laser_Scan, Pose_Scan):
 
     def pose_callback(self, msg):
         Pose_Scan.pose_callback(self, msg)
+        node_x = PosBag.path[self.now_node][1][0]
+        node_y = PosBag.path[self.now_node][1][1]
+        if node_x - 0.5 < round(self.position_x, 2) < node_x + 0.5 and node_y - 0.5 < round(self.position_y, 2) < node_y + 0.5 and self.target_node != 0:
+            self.roll_back()
 
-    def roll_back(self, drive):
-        pass
+    def roll_back(self):
+        if self.now_node == self.target_node:
+            self.set_pose = False
+            self.target_node = 0
+            self.target_dir = PosBag.path[self.target_node][3]
+            if self.target_dir >= 360.0:
+                self.target_dir -= 360
+            elif self.target_dir < 0:
+                self.target_dir += 360
+            self.old_target_dir = self.target_dir
+            return  #finish roll back
+        else:
+            # arrived go to next node
+            self.now_node = PosBag.stk.pop()
+            self.target_dir = self.get_direction(PosBag.path[self.now_node][1])
+            self.set_pose = True
+        #self.print_explorer_status()
 
     def set_starting(self): #init status at starting
-        self. target_dir = 90.0
+        self.target_dir = 90.0
         self.old_target_dir = self.angle
         self.set_pose = True
 
@@ -119,7 +140,12 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.set_pose = True
             drive.forceStop()
             drive.publish()
-            self.check_side()
+            if self.target_node == 0:
+                self.check_side()
+            else:
+                self.roll_back()
+                #self.target_dir = self.get_direction(PosBag.path[self.now_node][1])
+                #self.set_pose = True
             return
 
         #check side path
@@ -127,7 +153,7 @@ class Explorer(Laser_Scan, Pose_Scan):
             self.left_wall = self.position
         elif not(self.range_left_min >= 1.5) and not(self.left_wall == [0, 0]):
             position = numpy.round((numpy.array(self.position) + numpy.array(self.left_wall)) / 2, 2)
-            self.push_bag(position.tolist(), 'left')
+            self.push_unused(position.tolist(), 'left')
             self.left_wall = [0, 0]
 
         if self.range_right_min >= 1.5 and self.right_wall == [0, 0]:
@@ -135,7 +161,7 @@ class Explorer(Laser_Scan, Pose_Scan):
         elif not(self.range_right_min >= 1.5) and not(self.right_wall == [0, 0]):
             position = numpy.round((numpy.array(self.position) + numpy.array(self.left_wall)) / 2, 2)
             numpy.round(position, 2)
-            self.push_bag(position.tolist(), 'right')
+            self.push_unused(position.tolist(), 'right')
             self.right_wall = [0, 0]
 
         if self.range_left_min < 1.5 and self.range_right_min < 1.5:
@@ -190,7 +216,13 @@ class Explorer(Laser_Scan, Pose_Scan):
             check = 'left'
             self.target_dir = self.old_target_dir + 90.0  # turn left
         else:
-            self.target_dir = self.old_target_dir - 180.0  # turn back
+            drive = Drive_Method()
+            # roll_back start
+            self.target_node = self.find_target()
+            self.now_node = self.stk_count
+            self.roll_back()
+            #self.target_dir = self.get_direction(PosBag.path[self.now_node][1])  # turn back
+            self.print_explorer_status()
 
         #check overflow
         if self.target_dir >= 360:
@@ -200,8 +232,9 @@ class Explorer(Laser_Scan, Pose_Scan):
         #self.print_explorer_status()
         self.set_pose = True
 
-        #push stack and path_dic
-        self.push_bag(self.position, check)
+        if not check == '':
+            #push stack and path_dic
+            self.push_bag(self.position, check)
 
     def push_bag(self, position, dir):  #push stack and path_dic
         if dir == 'both':
@@ -212,10 +245,17 @@ class Explorer(Laser_Scan, Pose_Scan):
                     PosBag.stk.remove(i)
             PosBag.stk.reverse()
         self.stk_count += 1
-        PosBag.path[self.stk_count] = [self.stk_count - 1, position, dir]
+        PosBag.path[self.stk_count] = [self.stk_count - 1, position, dir, self.target_dir]
         PosBag.stk.append(self.stk_count)
-        print "path: ", PosBag.path
-        print "stack: ", PosBag.stk
+        #print "path: ", PosBag.path
+        #print "stack: ", PosBag.stk
+
+    def push_unused(self, position, dir):
+        self.stk_count += 1
+        PosBag.path[self.stk_count] = [self.stk_count - 1, position, dir, self.target_dir]
+        PosBag.unused.append(self.stk_count)
+        #print "path: ", PosBag.path
+        #print "stack: ", PosBag.stk
 
     def get_direction(self, position):  #get target direction
         angle = 180.0 * math.atan2(self.position_y - position[1], self.position_x - position[0]) / math.pi
@@ -236,10 +276,24 @@ class Explorer(Laser_Scan, Pose_Scan):
         idx = (numpy.abs(angle_array - value)).argmin()
         return angle_array[idx]
 
+    def find_target(self):
+        for l in list(reversed(PosBag.stk)):
+            if 'both' in PosBag.path[l]:
+                return l
+        # return unused node
+        if len(PosBag.unused) != 0:
+            node = PosBag.unused.pop()
+            PosBag.stk.append(node)
+            return node
+        else:
+            rospy.loginfo("PosBag.unused stack is empty!")
+        return 0
+
     #TODO: erase print method
     def print_explorer_status(self):
         rospy.loginfo("angle: %0.10f" %self.angle)
         rospy.loginfo("target_dir: %0.10f" %self.target_dir)
+        '''
         rospy.loginfo("range ahead: %0.10f" %self.range_ahead)
         rospy.loginfo("range left min: %0.1f" % self.range_left_min)
         rospy.loginfo("range right min: %0.1f" % self.range_right_min)
@@ -249,3 +303,6 @@ class Explorer(Laser_Scan, Pose_Scan):
         rospy.loginfo("right: %0.10f" %self.right)
         rospy.loginfo("speed: %0.01f" %Drive_vel.speed)
         rospy.loginfo("turn: %0.01f" %Drive_vel.turn)
+        '''
+        rospy.loginfo("target node %0.01f" %self.target_node)
+        rospy.loginfo("now node %0.01f" %self.now_node)

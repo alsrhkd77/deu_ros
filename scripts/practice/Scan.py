@@ -78,6 +78,10 @@ class Scan(Laser_Scan, Pose_Scan):
         Laser_Scan.__init__(self)
         Pose_Scan.__init__(self)
 
+    def pose_callback(self, msg):
+        Pose_Scan.pose_callback(self, msg)
+
+
 
 '''
 Must Erase at last

@@ -3,6 +3,7 @@
 import Drive_vel
 
 import rospy
+import math
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
@@ -92,13 +93,22 @@ class Drive_Method(Drive):
         Drive_vel.speed = 0
         Drive_vel.turn = 0
 
+    def forceTurn(self, angle):
+        Drive_vel.speed = 0
+        Drive_vel.turn = (angle * math.pi / 180.0)
+
+    def setTurn(self, angle):
+        Drive_vel.turn = (angle * math.pi / 180.0)
+
     def turnLeft(self):
         Drive_vel.speed = 0
-        Drive_vel.turn = 2
+        #Drive_vel.turn = 2
+        Drive_vel.turn = (90.0 * math.pi / 180.0)
 
     def turnRight(self):
         Drive_vel.speed = 0
-        Drive_vel.turn = -2
+        #Drive_vel.turn = -2
+        Drive_vel.turn = -(90.0 * math.pi / 180.0)
 
     def booster(self):
         Drive_vel.speed = 1.0

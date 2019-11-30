@@ -20,7 +20,6 @@ class Drive:
         t.angular.z = Drive_vel.turn
         t.linear.x = Drive_vel.speed
         self.twist_pub.publish(t)
-        #print "publish speed: %f, turn %f", Drive_vel.speed, Drive_vel.turn
         # decrease turn
         if Drive_vel.turn > 0:
             Drive_vel.turn -= 0.1
@@ -66,8 +65,6 @@ Publish Twist MSG use Method
 class Drive_Method(Drive):
     def __init__(self):
         Drive.__init__(self)
-        # rospy.Subscriber('keys', String, self.keys_cb, self.twist_pub)
-        # rospy.spin()
 
     def increaseSpeed(self):
         Drive_vel.speed += 0.1
@@ -102,12 +99,10 @@ class Drive_Method(Drive):
 
     def turnLeft(self):
         Drive_vel.speed = 0
-        #Drive_vel.turn = 2
         Drive_vel.turn = (90.0 * math.pi / 180.0)
 
     def turnRight(self):
         Drive_vel.speed = 0
-        #Drive_vel.turn = -2
         Drive_vel.turn = -(90.0 * math.pi / 180.0)
 
     def booster(self):
@@ -118,11 +113,9 @@ class Drive_Method(Drive):
         Drive_vel.turn = 0
 
     def smallTurnLeft(self):
-        Drive_vel.speed = 0
         Drive_vel.turn = 0.4
 
     def smallTurnRight(self):
-        Drive_vel.speed = 0
         Drive_vel.turn = -0.4
 
     def angleTurnLeft(self):
@@ -132,15 +125,3 @@ class Drive_Method(Drive):
     def angleTurnRight(self):
         Drive_vel.speed = 0
         Drive_vel.turn = -0.1
-
-
-'''
-if __name__ == "__main__":
-    rospy.init_node('drive_car')
-    drive = Drive()
-    drive_keys = Drive_Keys()
-    rate = rospy.Rate(10)
-    while not rospy.is_shutdown():
-        drive.publish()
-        rate.sleep()
-'''

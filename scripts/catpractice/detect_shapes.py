@@ -18,39 +18,30 @@ class Detect_shapes:
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         _, _, img = cv2.split(img)
+        img = cv2.inRange(img, 200, 255)
         #img = cv2.inRange(img, 200, 225)
         lower_white = numpy.array([0, 0, 200])
         upper_white = numpy.array([0, 0, 255])
         #mask = cv2.inRange(hsv, lower_white, upper_white)
 
-        '''
-        h, w = mask.shape
-        
-        mask[0:h * 3 / 5, 0:w] = 0
-        mask[h - (h / 8):h, 0:w] = 0
-        mask[0:h, 0:w / 4] = 0
-        mask[0:h, w - (w / 4):w] = 0
-        '''
+        M = cv2.moments(img)
+        if M['m00'] > 0:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
 
-        #ret, thr = cv2.threshold(img, 127, 255, 0)
+        cv2.circle(img, (cx, cy), 10, (0, 255, 0), -1)
+
         ret, thr = cv2.threshold(img, 200, 255, 0)
         _, contours, _ = cv2.findContours(thr, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         if len(contours) <= 0:
             return  #not found
 
-        #cnt = contours[0]
-
         for cnt in contours:
-            x,y,w,h = cv2.boundingRect(cnt)
-            img = cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
-        cv2.drawContours(img, contours, -1, (255, 255, 0), 1)
-        '''
-        epsilon1 = 0.1*cv2.arcLength(cnt, True)
-        approx1 = cv2.approxPolyDP(cnt, epsilon1, True)
+            if cv2.contourArea(cnt) > 5000:
+                x, y, w, h = cv2.boundingRect(cnt)
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-        cv2.drawContours(image, [approx1], 0, (0, 255, 0), 3)
-        '''
         #cv2.imshow("window", image)
         #cv2.imshow("window", hsv)
         cv2.imshow("center", img)
@@ -62,7 +53,7 @@ class Detect_shapes:
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         _, _, img = cv2.split(img)
-        # img = cv2.inRange(img, 200, 225)
+        img = cv2.inRange(img, 200, 225)
         lower_white = numpy.array([0, 0, 200])
         upper_white = numpy.array([0, 0, 255])
         # mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -75,6 +66,11 @@ class Detect_shapes:
         mask[0:h, 0:w / 4] = 0
         mask[0:h, w - (w / 4):w] = 0
         '''
+        M = cv2.moments(img)
+        if M['m00']>0:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
+
 
         # ret, thr = cv2.threshold(img, 127, 255, 0)
         ret, thr = cv2.threshold(img, 200, 255, 0)
@@ -85,10 +81,15 @@ class Detect_shapes:
 
         # cnt = contours[0]
 
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
         for cnt in contours:
-            x, y, w, h = cv2.boundingRect(cnt)
-            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            if cv2.contourArea(cnt)> 5000:
+                x, y, w, h = cv2.boundingRect(cnt)
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
         cv2.drawContours(img, contours, -1, (255, 255, 0), 1)
+        cv2.circle(img, (cx, cy), 10, (0, 255, 0), -1)
         '''
         epsilon1 = 0.1*cv2.arcLength(cnt, True)
         approx1 = cv2.approxPolyDP(cnt, epsilon1, True)
@@ -105,7 +106,7 @@ class Detect_shapes:
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         _, _, img = cv2.split(img)
-        # img = cv2.inRange(img, 200, 225)
+        img = cv2.inRange(img, 200, 225)
         lower_white = numpy.array([0, 0, 200])
         upper_white = numpy.array([0, 0, 255])
         # mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -118,6 +119,10 @@ class Detect_shapes:
         mask[0:h, 0:w / 4] = 0
         mask[0:h, w - (w / 4):w] = 0
         '''
+        M = cv2.moments(img)
+        if M['m00'] > 0:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
 
         # ret, thr = cv2.threshold(img, 127, 255, 0)
         ret, thr = cv2.threshold(img, 200, 255, 0)
@@ -128,10 +133,14 @@ class Detect_shapes:
 
         # cnt = contours[0]
 
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         for cnt in contours:
-            x, y, w, h = cv2.boundingRect(cnt)
-            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            if cv2.contourArea(cnt) > 5000:
+                x, y, w, h = cv2.boundingRect(cnt)
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
         cv2.drawContours(img, contours, -1, (255, 255, 0), 1)
+        cv2.circle(img, (cx, cy), 10, (0, 255, 0), -1)
         '''
         epsilon1 = 0.1*cv2.arcLength(cnt, True)
         approx1 = cv2.approxPolyDP(cnt, epsilon1, True)

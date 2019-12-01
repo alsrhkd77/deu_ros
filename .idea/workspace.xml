@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/deu_ros.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deu_ros.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/LeftImageSubscriber.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/LeftImageSubscriber.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/NormalDrivingMode.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/NormalDrivingMode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/RightImageSubscriber.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/RightImageSubscriber.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_shapes.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/detect_shapes.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -130,6 +136,7 @@
       <workItem from="1575093333059" duration="20416000" />
       <workItem from="1575126661882" duration="900000" />
       <workItem from="1575133892293" duration="2945000" />
+      <workItem from="1575191862238" duration="6090000" />
     </task>
     <servers />
   </component>

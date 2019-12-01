@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 
 import rospy
-from Ros01team02.msg import leftMomentum
-from Ros01team02.msg import rightMomentum
+from std_msgs.msg import Float32
 from geometry_msgs.msg import Twist
+from LeftImageSubscriber import LeftImageSubscriber
+from RightImageSubscriber import RightImageSubscriber
 import message_filters
 
 class Drive:
@@ -38,15 +39,15 @@ class NormalDrive(Drive):
     def __init__(self):
         Drive.__init__(self)
         # when listen 2 topics
-        self.rightLine_sub_combine = message_filters.Subscriber('rightMomentum',rightMomentum)
-        self.leftLine_sub_combine = message_filters.Subscriber('leftMomentum', leftMomentum)
+        self.rightLine_sub_combine = message_filters.Subscriber('rightMomentum',Float32)
+        self.leftLine_sub_combine = message_filters.Subscriber('leftMomentum', Float32)
         ts = message_filters.ApproximateTimeSynchronizer([self.leftLine_sub_combine, self.rightLine_sub_combine], 10,
                                                          0.1, allow_headerless=True)
         ts.registerCallback(self.momentum_callback)
 
         # when listen only one topic
-        self.rightLine_sub = rospy.Subscriber('rightMomentum', rightMomentum, self.right_callback)
-        self.leftLine_sub = rospy.Subscriber('leftMomentum', leftMomentum, self.right_callback)
+        self.rightLine_sub = rospy.Subscriber('rightMomentum', Float32, self.right_callback)
+        self.leftLine_sub = rospy.Subscriber('leftMomentum', Float32, self.left_callback)
 
         print("End Initiator NormalDrive")
 
@@ -59,10 +60,10 @@ class NormalDrive(Drive):
         flt_left = self.casting_float(left)
         flt_right = self.casting_float(right)
 
-        err = (flt_left + flt_right) / 2
+        err = (flt_left + flt_right - 65) / 2
 
         self.twist.linear.x = 0.7
-        self.twist.angular.z = -float(err) / 1000
+        self.twist.angular.z = -float(err) / 1000.0
 
         print(" left : " + str(flt_left) + " right : " + str(flt_right) )
         print("err : " + str(self.twist.angular.z))
@@ -83,18 +84,18 @@ class NormalDrive(Drive):
 # RIGHT TOPIC CALLBACK
     def right_callback(self, topic):
         self.twist.linear.x = 1.0
-        self.twist.angular.z = float(-(topic / 2) / 1000)
-        print(" right : " + str(self.twist.angular.z) )
-        self.cmd_vel_pub.publish(self.twist)
-        print("End right Callback")
+        self.twist.angular.z = float(-(topic.data / 2.0) / 1000.0)
+        #print(" right : " + str(self.twist.angular.z) )
+        #self.cmd_vel_pub.publish(self.twist)
+        #print("End right Callback")
 
 #LEFT TOPIC CALLBACK
     def left_callback(self, topic):
         self.twist.linear.x = 1.0
-        self.twist.angular.z = float(-(topic / 2) / 1000)
-        print(" left : " + str(self.twist.angular.z) )
-        self.cmd_vel_pub.publish(self.twist)
-        print("End left Callback")
+        self.twist.angular.z = float(-(topic.data / 2.0) / 1000.0)
+        #print(" left : " + str(self.twist.angular.z) )
+        #self.cmd_vel_pub.publish(self.twist)
+        #print("End left Callback")
 
 
 
@@ -103,4 +104,6 @@ class NormalDrive(Drive):
 if __name__ == '__main__':
     rospy.init_node('Normal_driving_mode')
     normal = NormalDrive()
+    #left = LeftImageSubscriber()
+    #right = RightImageSubscriber()
     rospy.spin()

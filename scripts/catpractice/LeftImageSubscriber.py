@@ -3,7 +3,7 @@
 
 from sensor_msgs.msg import Image
 import rospy, cv2, cv_bridge, numpy
-from Ros01team02.msg import leftMomentum
+from std_msgs.msg import Float32
 
 """
 There was a problem about inheriting same parent class. 
@@ -23,8 +23,8 @@ class ImageProcessor:
         self.cx = 0
 
         self.leftmomentum_sub = rospy.Publisher('leftMomentum',
-                                           leftMomentum, queue_size=1)
-        self.leftmomentum = leftMomentum()
+                                           Float32, queue_size=1)
+        self.leftmomentum = Float32
 
         print("Left Initiator ImageProcessor")
 
@@ -64,7 +64,7 @@ class ImageProcessor:
 
             self.cx = self.cx - 320
 
-            self.leftmomentum.leftMomentum = self.cx
+            self.leftmomentum= self.cx
             self.leftmomentum_sub.publish(self.leftmomentum)
 
             cv2.imshow("left origin", self.originImage)

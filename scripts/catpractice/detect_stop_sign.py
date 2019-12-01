@@ -22,7 +22,7 @@ class image_converter:
     def __init__(self):
         self.bridge = cv_bridge.CvBridge()
         self.surf = cv2.xfeatures2d.SURF_create(1000)
-        self.stop_sign_img = cv2.imread('parking.png', cv2.IMREAD_COLOR)
+        self.stop_sign_img = cv2.imread('stop_sign.png', cv2.IMREAD_COLOR)
         self.match_pub = rospy.Publisher("matches/is_block", Bool)
         self.image_sub = rospy.Subscriber("camera/rgb/image_raw", Image, self.callback)
         self.match = False

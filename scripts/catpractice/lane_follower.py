@@ -2,11 +2,42 @@
 
 import rospy
 import cv2
-import cv_bridge
-from sensor_msgs.msg import Image
-from robot_drive_controller import RobotDriveController
+from scan_image import Scan_image
+from drive import Drive_Method
 
 
+class Lane_follower(Scan_image):
+    def __init__(self):
+        Scan_image.__init__(self, 'center')
+        self.left = Scan_image('left')
+        self.right = Scan_image('right')
+
+    def image_callback(self, msg):
+        Scan_image.image_callback(self, msg)
+        drive = Drive_Method()
+        err = (self.left.cx + self.right.cx - 640) / 2
+        err = -float(err) / 40
+        #print err
+        drive.setTurn(err)
+        drive.straight()
+        drive.publish()
+
+        self.view() # erase at last
+
+
+    def view(self):
+        # center
+        # cv2.circle(self.image, (self.cx, self.cy), 20, (0, 0, 255), -1)
+        cv2.imshow("center", self.image)
+        #left
+        cv2.circle(self.left.image, (self.left.cx, self.left.cy), 20, (0, 0, 255), -1)
+        cv2.imshow("left", self.left.image)
+        #right
+        cv2.circle(self.right.image, (self.right.cx, self.right.cy), 20, (0, 0, 255), -1)
+        cv2.imshow("right", self.right.image)
+        cv2.waitKey(3)
+
+'''
 class LineTracer:
     def __init__(self, image_topic):
         self.bridge = cv_bridge.CvBridge()
@@ -34,10 +65,11 @@ class LineTracer:
         origin_image = self.bridge.cv2_to_imgmsg(origin_image)
         self.image_pub.publish(origin_image)
         # cv2.waitKey(0)
-
+'''
 
 if __name__ == '__main__':
     rospy.init_node('test')
+    '''
     left_line = LineTracer('my_left_camera/rgb/image_raw')
     right_line = LineTracer('my_right_camera/rgb/image_raw')
     drive_controller = RobotDriveController()
@@ -53,4 +85,7 @@ if __name__ == '__main__':
         drive_controller.set_angular(err)
         drive_controller.drive()
         rate.sleep()
+    '''
+    follower = Lane_follower()
     rospy.spin()
+

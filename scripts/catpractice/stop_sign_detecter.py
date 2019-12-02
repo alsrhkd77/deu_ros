@@ -36,8 +36,11 @@ class Stop_sign_detecter(Scan_image):
         FLANN_INDEX_KDTREE = 1
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
         search_params = dict(checks=50)  # or pass empty dictionary
+        if len(index_params) == 0:
+            return #finish
         flann = cv2.FlannBasedMatcher(index_params, search_params)
         matches = flann.knnMatch(des1, des2, k=2)
+
         print "matches: ", len(matches)
 
         # Need to draw only good matches, so create a mask

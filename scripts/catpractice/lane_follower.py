@@ -34,7 +34,7 @@ class Lane_follower(Scan_image):
         else:
             drive.setTurn(err)
         if abs(err) > 0.5:
-            drive.setSpeed(0.6)
+            drive.setSpeed(0.4)
         else:
             drive.straight()
         drive.publish()

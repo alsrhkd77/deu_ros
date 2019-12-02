@@ -1,2 +1,2 @@
-__all__ = ['blockingbar_detector.py', 'stop_line_detector.py', 'line_finder', 'detect_stop_sign',
+__all__ = ['blockingbar_detector.py', 'stop_line_detector.py', 'line_finder', 'stop_sign_detecter.py',
            'obstacle_detecter.py']

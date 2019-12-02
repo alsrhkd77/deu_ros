@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/catpractice/car_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/car_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_stop_sign.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/detect_stop_sign.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_stop_sign.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/stop_sign_detecter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/lane_follower.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/lane_follower.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -142,7 +143,7 @@
       <workItem from="1575216131437" duration="4402000" />
       <workItem from="1575220681840" duration="71000" />
       <workItem from="1575257082616" duration="3685000" />
-      <workItem from="1575275590305" duration="16354000" />
+      <workItem from="1575275590305" duration="24198000" />
     </task>
     <servers />
   </component>

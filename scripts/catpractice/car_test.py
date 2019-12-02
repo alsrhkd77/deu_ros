@@ -10,7 +10,7 @@ from obstacle_detecter import Obstacle_detecter
 if __name__ == "__main__":
     rospy.init_node('car_test')
     follower = Lane_follower()
-    #bar_detector = BlockingBar_Detector()
+    bar_detector = BlockingBar_Detector()
     #stop_line = Stop_line_detactor()
     #turn = Flover()
     #obstacle = Obstacle_detecter()

@@ -3,42 +3,41 @@
 
 import rospy
 import cv2, cv_bridge
-import numpy as np
-import matplotlib.pyplot as plt
-import roslib
+import numpy
 import sys
 import time
 
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Bool
+from scan_image import Scan_image
 
 
 MIN_MATCH_COUNT = 25
 show_matched_points = True
 
-
-class image_converter:
+class Stop_sign_detecter(Scan_image):
     def __init__(self):
-        self.bridge = cv_bridge.CvBridge()
+        Scan_image.__init__(self, 'center', 0)
         self.surf = cv2.xfeatures2d.SURF_create(1000)
-        self.stop_sign_img = cv2.imread('stop_sign.png', cv2.IMREAD_COLOR)
-        self.match_pub = rospy.Publisher("matches/is_block", Bool)
-        self.image_sub = rospy.Subscriber("camera/rgb/image_raw", Image, self.callback)
+        self.stop_sign = cv2.imread('stop_sign.png', cv2.IMREAD_COLOR)
         self.match = False
 
-    def callback(self, msg):
+    def image_callback(self, msg):
+        Scan_image.image_callback(self, msg)
+        '''
         try:
             image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         except CvBridgeError as e:
             print(e)
+        '''
 
-        imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        imageGray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
         cv2.useOptimized()
         cv2.setUseOptimized(True)
 
-        kp1, des1 = self.surf.detectAndCompute(self.stop_sign_img, None)
+        kp1, des1 = self.surf.detectAndCompute(self.stop_sign, None)
         kp2, des2 = self.surf.detectAndCompute(imageGray, None)
 
         FLANN_INDEX_KDTREE = 1
@@ -46,27 +45,21 @@ class image_converter:
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
         search_params = dict(checks=50)
 
-        matches = None
+        #matches = None
+        flann = cv2.FlannBasedMatcher(index_params, search_params)
+        matches = flann.knnMatch(des1, des2, k=2)
 
-        try:
-            flann = cv2.FlannBasedMatcher(index_params, search_params)
-            matches = flann.knnMatch(des1, des2, k=2)
-
-        except Exception as ex:
-            print('knnMatch error')
-            return
-
-        good = []
+        matches = []
 
         for m, n in matches:
             if m.distance < 0.7 * n.distance:
-                good.append(m)
+                matches.append(m)
 
-        outer_dst_pts = np.float32([])
+        outer_dst_pts = numpy.float32([])
 
-        if len(good) > MIN_MATCH_COUNT:
-            src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
-            dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+        if len(matches) > MIN_MATCH_COUNT:
+            src_pts = numpy.float32([kp1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+            dst_pts = numpy.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
 
             outer_dst_pts = dst_pts
 
@@ -74,9 +67,9 @@ class image_converter:
 
             matchesMask = mask.ravel().tolist()
 
-            h, w, d = self.stop_sign_img.shape
+            h, w, d = self.stop_sign.shape
 
-            pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
+            pts = numpy.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
 
             dst = None
 
@@ -87,7 +80,7 @@ class image_converter:
 
                 return
 
-            image = cv2.polylines(image, [np.int32(dst)], True, (255, 0, 0), 3, cv2.LINE_AA)
+            self.image = cv2.polylines(self.image, [numpy.int32(dst)], True, (255, 0, 0), 3, cv2.LINE_AA)
 
             self.match = True
 
@@ -96,19 +89,19 @@ class image_converter:
 
         else:
             self.match = False
-            rospy.logdebug("Not enough matches are found - {}/{}".format(len(good), MIN_MATCH_COUNT))
+            rospy.logdebug("Not enough matches are found - {}/{}".format(len(matches), MIN_MATCH_COUNT))
 
             matchesMask = None
 
         draw_params = dict(matchColor=(0, 255, 0), singlePointColor=None, matchesMask=matchesMask, flags=2)
 
-        matches_img = cv2.drawMatches(self.stop_sign_img, kp1, image, kp2, good, None, **draw_params)
+        matches_img = cv2.drawMatches(self.stop_sign, kp1, self.image, kp2, matches, None, **draw_params)
 
         if show_matched_points:
             for pt in outer_dst_pts:
                 x, y = pt[0]
 
-                cv2.circle(image, (x, y), 3, (0, 0, 255), -1)
+                cv2.circle(self.image, (x, y), 3, (0, 0, 255), -1)
 
         self.match_pub.publish(self.match)
 
@@ -121,7 +114,7 @@ class image_converter:
 
 
 def main(args):
-    ic = image_converter()
+    ic = Stop_sign_detecter()
     rospy.init_node('image_converter', anonymous=True, log_level=rospy.DEBUG)
     try:
         rospy.spin()

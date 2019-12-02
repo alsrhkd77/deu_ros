@@ -8,7 +8,7 @@ from drive import Drive_Method
 
 class BlockingBar_Detector(Scan_image):
     def __init__(self):
-        Scan_image.__init__(self, 'center')
+        Scan_image.__init__(self, 'center', 0)
         self.drive = Drive_Method()
 
     def image_callback(self, msg):

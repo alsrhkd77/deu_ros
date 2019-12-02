@@ -2,13 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1ad742fb-89b5-4964-8b6e-8bd08616927f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/catpractice/blockingbar_detector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/catpractice/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_blocking_bar.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_stop_line.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/stop_line_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/blockingbar_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/blockingbar_detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/car_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/car_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/catpractice/detect_stop_sign.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/detect_stop_sign.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/drive.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/drive.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/catpractice/lane_follower.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/lane_follower.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/obstacle_stop.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/obstacle_detecter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/scan_image.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/scan_image.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/catpractice/stop_line_detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/catpractice/stop_line_detector.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -145,6 +148,8 @@
       <workItem from="1575206362407" duration="9238000" />
       <workItem from="1575216131437" duration="4402000" />
       <workItem from="1575220681840" duration="71000" />
+      <workItem from="1575257082616" duration="3685000" />
+      <workItem from="1575275590305" duration="13080000" />
     </task>
     <servers />
   </component>

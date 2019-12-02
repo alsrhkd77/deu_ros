@@ -96,4 +96,4 @@ class Drive_Method(Drive):
     def go_sign(self):
         Drive_vel.stop = False
         self.straight()
-        self.publish()
+        #self.publish()
